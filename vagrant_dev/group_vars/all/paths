@@ -1,0 +1,2 @@
+haproxy_host_dir: /srv/services/haproxy
+etcd_host_dir: /srv/services/etcd
