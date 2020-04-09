@@ -1,0 +1,11 @@
+---
+- hosts: all-servers
+  roles:
+    - name: common-packages
+      tags: [base, common-packages]
+      become: yes
+
+    - name: docker
+      tags: [base, docker]
+      become: yes
+
