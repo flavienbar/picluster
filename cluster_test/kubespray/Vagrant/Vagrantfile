@@ -1,0 +1,69 @@
+# ####################################################################
+# ################### CONFIGURATION VARIABLES ########################
+# ####################################################################
+IMAGE_NAME = "ubuntu/bionic64"   # Image to use
+MEM = 4096                          # Amount of RAM
+CPU = 2                             # Number of processors (Minimum value of 2 otherwise it will not work)
+MASTER_NAME="master"                  # Masters node name
+WORKER_NAME="worker"		    # Workers node name
+MASTER_NBR = 3			    # Number of master node
+WORKER_NBR = 3                      # Number of workers node
+NODE_NETWORK_BASE = "192.168.50"    # First three octets of the IP address that will be assign to all
+sshKey="#{Dir.home}/.ssh/id_ed25519.pub"
+
+
+Vagrant.configure("2") do |config|
+ config.ssh.insert_key = false
+
+ # RAM and CPU config
+ config.vm.provider "virtualbox" do |v|
+     v.memory = MEM
+     v.cpus = CPU
+ end
+
+ # Master node config
+ (1..MASTER_NBR).each do |i|
+  config.vm.define "#{MASTER_NAME}#{i}" do |master|
+   # Hostname and network config
+   master.vm.box = IMAGE_NAME
+   master.vm.network "private_network", ip: "#{NODE_NETWORK_BASE}.#{i + 100}"
+   master.vm.hostname = "#{MASTER_NAME}#{i}"
+   master.vm.provision "shell" do |s|
+        ssh_pub_key = File.readlines("#{sshKey}").first.strip
+        s.inline = <<-SHELL
+          echo #{ssh_pub_key} >> /home/vagrant/.ssh/authorized_keys
+          mkdir /root/.ssh && chmod 700 /root/.ssh
+          touch /root/.ssh/authorized_keys && chmod 600 /root/.ssh/authorized_keys
+          echo #{ssh_pub_key} >> /root/.ssh/authorized_keys
+        SHELL
+    end
+  end
+ end
+
+ # Worker node config
+ (1..WORKER_NBR).each do |i|
+  config.vm.define "#{WORKER_NAME}#{i}" do |worker|
+   # Hostname and network config
+   worker.vm.box = IMAGE_NAME
+   worker.vm.network "private_network", ip: "#{NODE_NETWORK_BASE}.#{i + 110}"
+   worker.vm.hostname = "#{WORKER_NAME}#{i}"
+   worker.vm.provision "shell" do |s|
+        ssh_pub_key = File.readlines("#{sshKey}").first.strip
+        s.inline = <<-SHELL
+          echo #{ssh_pub_key} >> /home/vagrant/.ssh/authorized_keys
+          mkdir /root/.ssh && chmod 700 /root/.ssh
+          touch /root/.ssh/authorized_keys && chmod 600 /root/.ssh/authorized_keys
+          echo #{ssh_pub_key} >> /root/.ssh/authorized_keys
+        SHELL
+    end
+  end
+ end
+
+ # Ansible
+ config.vm.provision "ansible" do |ansible|
+  ansible.inventory_path = "vagrant.inventory"
+  ansible.playbook = "../cluster.yml"
+  ansible.verbose = "v"
+ end
+
+end
