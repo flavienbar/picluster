@@ -1,4 +1,0 @@
----
-hostname: worker2
-int_server_id: 5
-net_internal_ip: 192.168.50.112
