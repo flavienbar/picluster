@@ -1,0 +1,70 @@
+all:
+  hosts:
+    blanc:
+      ansible_host: 192.168.1.100
+      ip: 192.168.1.100
+      acces_ip: 192.168.1.100
+      ansible_user: giujorge
+    noir:
+      ansible_host: 192.168.1.101
+      ip: 192.168.1.101   
+      acces_ip: 192.168.1.101
+      ansible_user: giujorge
+    violet:
+      ansible_host: 192.168.1.102
+      ip: 192.168.1.102   
+      acces_ip: 192.168.1.102
+      ansible_user: giujorge
+    bleu:
+      ansible_host: 192.168.1.103
+      ip: 192.168.1.103
+      acces_ip: 192.168.1.103
+      ansible_user: giujorge
+    vert:
+      ansible_host: 192.168.1.104
+      ip: 192.168.1.104
+      acces_ip: 192.168.1.104
+      ansible_user: giujorge
+    jaune:
+      ansible_host: 192.168.1.105
+      ip: 192.168.1.105
+      acces_ip: 192.168.1.105
+      ansible_user: giujorge
+    orange:
+      ansible_host: 192.168.1.106
+      ip: 192.168.1.106
+      acces_ip: 192.168.1.106
+      ansible_user: giujorge
+    rose:
+      ansible_host: 192.168.1.107
+      ip: 192.168.1.107
+      acces_ip: 192.168.1.107
+      ansible_user: giujorge
+    rouge:
+      ansible_host: 192.168.1.108
+      ip: 192.168.1.108
+      acces_ip: 192.168.1.108
+      ansible_user: giujorge
+  children:
+    master:
+      hosts:
+        blanc:
+        noir:
+        violet:
+    node:
+      hosts:
+        bleu:
+        vert:
+        jaune:
+        orange:
+        rose:
+        rouge:
+    etcd:
+      hosts:
+        blanc:
+        noir:
+        violet:
+    cluster:
+      children:
+        master:
+        node:

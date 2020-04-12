@@ -1,0 +1,38 @@
+---
+- name: Install aptitude using apt
+  apt:
+    name: aptitude
+    state: latest
+    update_cache: yes
+    force_apt_get: yes
+
+- name: Install pip
+  apt:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+    - python3
+    - python3-pip
+    - python-pip
+
+- name: remove pip docker
+  pip:
+    name: docker
+    state: absent
+
+- name: remove pip docker
+  pip:
+    name: docker-py
+    state: present
+
+- name: Install required Ubuntu packages
+  apt:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+    - openjdk-8-jdk
+
+
+

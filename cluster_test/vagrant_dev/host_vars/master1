@@ -1,0 +1,4 @@
+---
+hostname: master1
+int_server_id: 1
+net_internal_ip: 192.168.50.101

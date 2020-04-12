@@ -1,0 +1,27 @@
+---
+- hosts: all
+  become: true
+  roles:
+    - jdk
+
+- hosts: all
+  become: true
+  roles:
+    - docker
+
+- hosts: all
+  become: true
+  roles:
+    - prerequis
+
+- hosts: blanc
+  become: true
+  become_user: giujorge
+  roles:
+    - kubernetes/master
+
+- hosts: nodes
+  become: true
+  roles:
+    - kubernetes/node
+

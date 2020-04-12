@@ -1,0 +1,17 @@
+[vagrant:vars]
+ansible_python_interpreter=/usr/bin/python3
+
+[vagrant]
+master1 ansible_host=192.168.50.101
+worker1 ansible_host=192.168.50.111
+worker2 ansible_host=192.168.50.112
+
+[all-servers:children]
+vagrant
+
+[master-nodes]
+master1
+
+[worker-nodes]
+worker1
+worker2

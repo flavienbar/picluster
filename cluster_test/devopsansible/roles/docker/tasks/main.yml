@@ -1,0 +1,44 @@
+---
+- name: Install packages to allow apt to use a repository over HTTP
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
+  loop: ['apt-transport-https', 'ca-certificates','curl','software-properties-common']
+
+- name: Add Docker’s official GPG key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Remove a Apt specific signing key, leading 0x is valid
+  apt_key:
+    id: 0EBFCD88
+    state: present
+
+- name: Add Docker Repository
+  apt_repository:
+     repo: 'deb [arch=arm64] https://download.docker.com/linux/ubuntu bionic stable'
+     state: present
+
+- name: Update apt and install docker-ce
+  apt: 
+    update_cache: yes
+    state: latest
+    name: "{{ item }}"
+  loop: ['docker-ce', 'docker-ce-cli', 'containerd.io']
+
+
+- name: Add user(s) to "docker" group
+  user:
+    name: "{{ item }}"
+    groups: "docker"
+    append: true
+  loop: ['vagrant']
+
+- name: Enable and check Docker service
+  systemd:
+    name: docker
+    daemon_reload: yes
+    state: started
+    enabled: yes
+  register: started_docker

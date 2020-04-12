@@ -1,0 +1,35 @@
+---
+- name: install kubectl
+    apt:
+      name: kubectl
+      state: present
+      force: yes
+
+- name: create .kube directory
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+  with_items:
+    - "$HOME/.kube"
+
+- name: copy admin.conf to user's kube config
+    copy:
+      src: /etc/kubernetes/admin.conf
+      dest: /home/ubuntu/.kube/config
+      remote_src: yes
+      owner: vagrant
+
+- import_tasks: initiate_master.yml
+  when: inventory_hostname == groups["master-nodes"][0]
+
+- import_tasks: join_master.yml
+  when: inventory_hostname != groups["master-nodes"][0]
+
+- name: Wait for master to be ready
+  shell: "kubectl get nodes"
+  register: nodes
+  until:
+    - '" NotReady " not in nodes.stdout'
+  retries: 30
+  delay: 10

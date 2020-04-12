@@ -1,0 +1,28 @@
+---
+- hosts: all-servers
+  roles:
+    - name: common-packages
+      tags: [base, common-packages]
+      become: yes
+
+    - name: docker
+      tags: [base, docker]
+      become: yes
+
+- hosts: [master-nodes, worker-nodes]
+  roles:
+    - name: kubernetes
+      tags: [base, kubernetes]
+      become: yes
+
+- hosts: master-nodes
+  roles:
+    - name: kubernetes-master
+      tags: [kubernetes, kubernetes-master]
+      become: yes
+
+- hosts: worker-nodes
+  roles:
+    - name: kubernetes-worker
+      tags: [kubernetes, kubernetes-worker]
+      become: yes
